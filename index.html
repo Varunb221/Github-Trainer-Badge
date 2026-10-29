@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#b92525">
+<title>GitHub Trainer Card</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+  :root{--red:#c92e2e;--red2:#f04b43;--ink:#28272a;--paper:#f4f0df;--paper2:#e6e0ca;--green:#38bd64;--gold:#f5c847}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:repeating-linear-gradient(135deg,#35191b 0 16px,#4b2022 16px 32px);color:var(--ink);font-family:'VT323',monospace;display:flex;align-items:center;justify-content:center;padding:22px}
+  button,input{font:inherit}
+  button{cursor:pointer}
+  .wrap{width:min(100%,760px)}
+  .topline{color:#fff4e7;text-align:center;font-family:'Press Start 2P',monospace;font-size:10px;line-height:1.8;margin-bottom:14px;text-shadow:2px 2px #1c0b0c}
+  .card-shell{background:#8f1d22;padding:7px;border:3px solid #f8c7a2;border-radius:18px;box-shadow:0 8px 0 #170b0c, inset 0 0 0 3px #57151a}
+  .card{background:var(--paper);border:3px solid var(--red2);border-radius:10px;min-height:370px;overflow:hidden;position:relative;box-shadow:inset 0 0 0 2px #fff}
+  .card-head{height:48px;background:var(--red);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:4px solid #7f1a1e;font-family:'Press Start 2P',monospace;font-size:clamp(10px,2.5vw,15px);text-shadow:2px 2px #702025}
+  .card-head small{font-size:10px}
+  .front-content{padding:15px;display:grid;grid-template-columns:1fr 150px;gap:12px}
+  .profile-line{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .avatar{width:78px;height:78px;object-fit:cover;background:#d8d2bd;border:4px solid white;outline:3px solid var(--red2);image-rendering:pixelated}
+  .name{font-family:'Press Start 2P',monospace;font-size:clamp(10px,2vw,14px);line-height:1.6;overflow-wrap:anywhere}
+  .handle{font-size:20px;color:#a51d24;overflow-wrap:anywhere}
+  .stats{display:grid;gap:7px}
+  .stat{display:flex;justify-content:space-between;gap:8px;background:#e8e2cf;border:1px solid #c9c2ae;padding:5px 8px;font-size:21px;box-shadow:inset 0 1px #fff}
+  .stat strong{font-family:'Press Start 2P',monospace;font-size:12px;align-self:center}
+  .pixel-panel{border:2px solid #c9c2ae;background:#e8e2cf;padding:9px;min-height:100px}
+  .pixel-art{height:100px;display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(5,1fr);gap:2px;padding:5px;background:#f8c8bd;border:3px solid #a7272c}
+  .pixel-art i{background:var(--red2);display:block}
+  .pixel-art i:nth-child(3n){background:#6229cb}.pixel-art i:nth-child(4n){background:#ffcf3e}.pixel-art i:nth-child(5n){opacity:0}
+  .stars{text-align:center;font-size:27px;letter-spacing:-2px;color:#bdb7a5;text-shadow:1px 1px #fff}
+  .stars .earned{color:var(--gold);text-shadow:1px 1px #976b10}
+  .mini-label{text-align:center;font-family:'Press Start 2P',monospace;font-size:8px;margin-top:4px}
+  .bottom-grid{padding:0 15px 15px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .panel-title{font-family:'Press Start 2P',monospace;font-size:9px;margin-bottom:8px}
+  .contribs{display:grid;grid-template-columns:repeat(13,1fr);gap:3px}
+  .contribs span{aspect-ratio:1;background:#d9d5c6;border:1px solid #cbc5b4}
+  .contribs span[data-level="1"]{background:#b8e3b8}.contribs span[data-level="2"]{background:#71cc82}.contribs span[data-level="3"]{background:#39a85b}.contribs span[data-level="4"]{background:#176d3a}
+  .award-list{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+  .award{min-height:52px;border:2px solid #c7c0ac;background:#e4deca;display:grid;place-items:center;font-size:22px;position:relative}
+  .award.earned{border-color:#4cc46b;background:#c4efc9}
+  .award.selected{outline:3px solid var(--red2);outline-offset:-3px}
+  .award span{font-size:9px;position:absolute;bottom:2px;left:2px;right:2px;text-align:center;white-space:nowrap;overflow:hidden}
+  .back-content{display:none;padding:15px}
+  .card.flipped .front-content,.card.flipped .bottom-grid{display:none}
+  .card.flipped .back-content{display:block}
+  .award-detail{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center}
+  .award-big{height:110px;display:grid;place-items:center;background:#e6e0ce;border:3px solid #bdb5a1;font-size:54px}
+  .award-big small{font-size:12px}
+  .award-info h2{font-family:'Press Start 2P',monospace;font-size:12px;line-height:1.7;margin:0 0 8px}
+  .award-info p{font-size:20px;margin:0 0 8px}
+  .controls{color:#fff4e7;text-align:center;font-size:19px;margin:13px 0 18px;text-shadow:2px 2px #170b0c}
+  .settings{background:#f4f0df;border:3px solid #d14a45;border-radius:10px;padding:14px;margin-top:16px}
+  .settings h2{font-family:'Press Start 2P',monospace;font-size:12px;margin:0 0 12px}
+  .form-row{display:flex;gap:8px;flex-wrap:wrap}
+  input{min-width:0;flex:1;padding:10px;border:2px solid #c8c1ad;background:white;font-size:20px}
+  .btn{border:2px solid #721b20;background:var(--red);color:#fff;padding:10px 13px;font-family:'Press Start 2P',monospace;font-size:9px;box-shadow:0 3px 0 #721b20}
+  .btn:active{transform:translateY(2px);box-shadow:0 1px 0 #721b20}
+  .message{min-height:22px;font-size:18px;margin-top:9px}
+  .footnote{color:#fff4e7;text-align:center;font-size:17px;line-height:1.35;margin-top:12px}
+  .theme-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+  .theme{width:27px;height:27px;border:3px solid white;outline:1px solid #777;cursor:pointer}
+  @media(max-width:520px){body{padding:12px}.front-content{grid-template-columns:1fr 105px;padding:10px;gap:8px}.avatar{width:58px;height:58px}.profile-line{gap:8px}.pixel-art{height:80px}.bottom-grid{padding:0 10px 10px;gap:8px}.stat{font-size:18px}.stat strong{font-size:9px}.card{min-height:330px}.award-detail{grid-template-columns:80px 1fr}.award-big{height:85px;font-size:42px}.award-info h2{font-size:10px}.award-info p{font-size:17px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="topline">GITHUB TRAINER CARD // WEB EDITION</div>
+  <div class="card-shell">
+    <section class="card" id="card" aria-live="polite">
+      <header class="card-head"><span id="headTitle">TRAINER CARD</span><small id="badgeCount">BADGES 4/8</small></header>
+      <div class="front-content">
+        <div>
+          <div class="profile-line">
+            <img class="avatar" id="avatar" alt="GitHub avatar" src="https://github.com/identicons/octocat.png">
+            <div><div class="name" id="displayName">OCTOCAT MONA</div><div class="handle" id="handle">@github-user</div></div>
+          </div>
+          <div class="stats">
+            <div class="stat"><span>CONTRIBS</span><strong id="contribCount">—</strong></div>
+            <div class="stat"><span>FOLLOWERS</span><strong id="followers">—</strong></div>
+            <div class="stat"><span>REPOS</span><strong id="repos">—</strong></div>
+            <div class="stat"><span>CONTACTS</span><strong id="contacts">0</strong></div>
+          </div>
+        </div>
+        <aside>
+          <div class="pixel-panel"><div class="pixel-art" id="pixelArt" aria-label="Decorative pixel art"></div></div>
+          <div class="stars" id="stars">★★★★★</div><div class="mini-label">BADGE STARS</div>
+          <div class="mini-label" style="margin-top:10px;color:#9d2528">PIXEL PROFILE</div>
+        </aside>
+      </div>
+      <div class="bottom-grid">
+        <section><div class="panel-title">CONTRIBUTION GRID</div><div class="contribs" id="contribGrid"></div></section>
+        <section><div class="panel-title">BADGE CASE</div><div class="award-list" id="awardList"></div></section>
+      </div>
+      <div class="back-content">
+        <div class="award-detail">
+          <div class="award-big" id="awardBig">🐙</div>
+          <div class="award-info"><h2 id="awardName">PROFILE BADGE</h2><p id="awardDesc">Choose an award to inspect it.</p><p id="awardStatus">STATUS: DEMO</p></div>
+        </div>
+        <div class="settings" style="margin-top:14px"><div class="panel-title">AWARD SELECTOR</div><div class="award-list" id="awardListBack"></div></div>
+      </div>
+    </section>
+  </div>
+  <div class="controls">CLICK CARD / SELECT TO FLIP · ARROWS TO PICK AWARD</div>
+
+  <section class="settings">
+    <h2>PLAYER SETTINGS</h2>
+    <div class="form-row">
+      <input id="nameInput" placeholder="Display name" maxlength="40" aria-label="Display name">
+      <input id="userInput" placeholder="GitHub username" maxlength="39" aria-label="GitHub username">
+      <button class="btn" id="saveBtn">SAVE PROFILE</button>
+      <button class="btn" id="loadBtn">FETCH STATS</button>
+    </div>
+    <div class="theme-row" aria-label="Color themes">
+      <button class="theme" title="Ruby" data-theme="ruby" style="background:#c92e2e"></button>
+      <button class="theme" title="Mint" data-theme="mint" style="background:#26965c"></button>
+      <button class="theme" title="Ocean" data-theme="ocean" style="background:#2776bb"></button>
+      <button class="theme" title="Violet" data-theme="violet" style="background:#7950b8"></button>
+      <button class="theme" title="Amber" data-theme="amber" style="background:#b7791f"></button>
+    </div>
+    <div class="message" id="message">Ready. Enter a public GitHub username, then choose FETCH STATS.</div>
+  </section>
+  <p class="footnote">Free demo · no account sign-in required · public GitHub profile data only<br>Profile and theme preferences are saved in this browser.</p>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const card = $('card');
+const themes = {
+ ruby:['#c92e2e','#f04b43'], mint:['#258a54','#45c979'], ocean:['#246ba8','#4c9de0'],
+ violet:['#6840a4','#9b75e8'], amber:['#a66a16','#e6a72e']
+};
+const awards = [
+ {id:'profile',icon:'🐙',name:'PROFILE BADGE',desc:'A GitHub profile is configured.',earned:true,where:'Profile'},
+ {id:'repo',icon:'📦',name:'REPO BUILDER',desc:'Create a public repository.',earned:false,where:'Repositories'},
+ {id:'readme',icon:'📘',name:'README MAKER',desc:'Add a README to a project.',earned:false,where:'Repository'},
+ {id:'pages',icon:'🌐',name:'PAGES PILOT',desc:'Publish a website with GitHub Pages.',earned:false,where:'GitHub Pages'},
+ {id:'commit',icon:'🟩',name:'COMMIT QUEST',desc:'Make a commit to a repository.',earned:false,where:'Commits'},
+ {id:'issues',icon:'🐛',name:'BUG HUNTER',desc:'Open or help resolve an issue.',earned:false,where:'Issues'},
+ {id:'social',icon:'⭐',name:'COMMUNITY STAR',desc:'Follow projects and engage with developers.',earned:false,where:'Community'},
+ {id:'cab',icon:'🔒',name:'CAB MEMBER',desc:'A secret placeholder award. This demo cannot verify the real CAB award.',earned:false,where:'Secret'}
+];
+let selectedAward = 0;
+function buildPixelArt(){ $('pixelArt').innerHTML=''; for(let i=0;i<35;i++){let e=document.createElement('i'); if([8,9,15,16,22,23].includes(i)) e.style.background='#f8c8bd'; $('pixelArt').appendChild(e)}}
+function buildGrid(){ $('contribGrid').innerHTML=''; for(let i=0;i<91;i++){let e=document.createElement('span');e.dataset.level=String(Math.random()<.35?0:Math.ceil(Math.random()*4));$('contribGrid').appendChild(e)}}
+function renderAwards(){
+  const earned = awards.filter(a=>a.earned).length;
+  $('badgeCount').textContent=`BADGES ${earned}/${awards.length}`;
+  $('stars').innerHTML=Array.from({length:5},(_,i)=>`<span class="${i<Math.floor(earned/2)?'earned':''}">★</span>`).join('');
+  for(const id of ['awardList','awardListBack']){
+    const list=$(id);list.innerHTML='';
+    awards.forEach((a,i)=>{const b=document.createElement('button');b.className='award'+(a.earned?' earned':'')+(i===selectedAward?' selected':'');b.innerHTML=`${a.icon}<span>${a.name.split(' ')[0]}</span>`;b.title=a.name;b.onclick=(ev)=>{ev.stopPropagation();selectedAward=i;renderAwards();showAward()};list.appendChild(b)});
+  }
+}
+function showAward(){const a=awards[selectedAward];$('awardBig').textContent=a.icon;$('awardName').textContent=a.name;$('awardDesc').textContent=a.desc;$('awardStatus').textContent=a.earned?'STATUS: EARNED':'STATUS: NOT VERIFIED';}
+function flip(){card.classList.toggle('flipped');$('headTitle').textContent=card.classList.contains('flipped')?'BADGE CASE':'TRAINER CARD';}
+card.addEventListener('click',e=>{if(e.target.closest('button'))return;flip()});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Enter'&&document.activeElement.tagName!=='INPUT')flip();
+ if(e.key==='Escape')card.classList.remove('flipped');
+ if(card.classList.contains('flipped')&&['ArrowLeft','ArrowUp','ArrowRight','ArrowDown'].includes(e.key)){
+   e.preventDefault();selectedAward=(selectedAward+(e.key==='ArrowLeft'||e.key==='ArrowUp'?-1:1)+awards.length)%awards.length;renderAwards();showAward();
+ }
+});
+function saveProfile(){
+ const name=$('nameInput').value.trim(); const user=$('userInput').value.trim().replace(/^@/,'');
+ if(user && !/^[a-zA-Z0-9-]{1,39}$/.test(user)){ $('message').textContent='Please enter a valid GitHub username.';return; }
+ localStorage.setItem('trainerName',name);localStorage.setItem('trainerUser',user);
+ $('displayName').textContent=(name||user||'OCTOCAT MONA').toUpperCase();$('handle').textContent='@'+(user||'github-user');
+ if(user)$('avatar').src=`https://github.com/${encodeURIComponent(user)}.png`;
+ $('message').textContent='Profile saved in this browser.'; 
+}
+async function fetchStats(){
+ saveProfile(); const user=$('userInput').value.trim().replace(/^@/,''); if(!user){$('message').textContent='Enter a GitHub username first.';return}
+ $('message').textContent='Fetching public profile data…';
+ try{
+  const r=await fetch(`https://api.github.com/users/${encodeURIComponent(user)}`);
+  if(!r.ok)throw new Error(r.status===404?'Username not found. Check the spelling.':`GitHub API returned ${r.status}. Try again later.`);
+  const d=await r.json();
+  $('displayName').textContent=(d.name||$('nameInput').value.trim()||d.login).toUpperCase();
+  $('handle').textContent='@'+d.login;$('avatar').src=d.avatar_url;
+  $('followers').textContent=Number(d.followers).toLocaleString();
+  $('repos').textContent=Number(d.public_repos).toLocaleString();
+  $('contacts').textContent=Number(d.following).toLocaleString();
+  $('message').textContent='Stats loaded. Contribution count is shown as — because GitHub’s basic public profile endpoint does not provide it.';
+  localStorage.setItem('trainerUser',d.login);localStorage.setItem('trainerName',d.name||'');
+ }catch(err){$('message').textContent=err.message+' Check your internet connection.'}
+}
+function applyTheme(name){const t=themes[name]||themes.ruby;document.documentElement.style.setProperty('--red',t[0]);document.documentElement.style.setProperty('--red2',t[1]);localStorage.setItem('trainerTheme',name)}
+$('saveBtn').onclick=saveProfile;$('loadBtn').onclick=fetchStats;
+document.querySelectorAll('[data-theme]').forEach(b=>b.onclick=()=>applyTheme(b.dataset.theme));
+const savedName=localStorage.getItem('trainerName')||'';const savedUser=localStorage.getItem('trainerUser')||'';
+$('nameInput').value=savedName;$('userInput').value=savedUser;
+if(savedName||savedUser){$('displayName').textContent=(savedName||savedUser).toUpperCase();$('handle').textContent='@'+(savedUser||'github-user');if(savedUser)$('avatar').src=`https://github.com/${encodeURIComponent(savedUser)}.png`}
+applyTheme(localStorage.getItem('trainerTheme')||'ruby');buildPixelArt();buildGrid();renderAwards();showAward();
+</script>
+</body>
+</html>
